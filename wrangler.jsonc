@@ -1,0 +1,18 @@
+{
+  "name": "web-lab-ranking",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-10-09",
+  "workers_dev": true,
+  "preview_urls": false,
+  "account_id": "54aac2d562f76845d4cae8f54de6c172",
+  "observability": { "enabled": false },
+  "durable_objects": {
+    "bindings": [{ "name": "RANKING", "class_name": "RankingObject" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["RankingObject"] }],
+  "vars": {
+    "ALLOWED_ORIGIN": "https://hyungminyoon1.github.io",
+    "ALLOW_LOCAL": "false",
+    "RANKING_ENABLED": "true"
+  }
+}

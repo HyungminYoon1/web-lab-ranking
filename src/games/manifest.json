@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "sourceRepositories": {
+    "neon-tactics": "HyungminYoon1/neon-tactics",
+    "parcel-panic": "HyungminYoon1/parcel-panic"
+  },
+  "files": [
+    {
+      "path": "src/games/neon-tactics/levels.js",
+      "sha256": "4b1980ce14b691d69eac83bd06295ed7925b54c01dc160e28acc6251a5e15afd"
+    },
+    {
+      "path": "src/games/neon-tactics/model.js",
+      "sha256": "0de4d2d4e53ef82ffceccb6d119aa5e95532431344c6f26cc7872d9effb50929"
+    },
+    {
+      "path": "src/games/neon-tactics/ranked.js",
+      "sha256": "2bd5f0f5f6f01e859706980ec9a5074c1d1a3b371538142485aafacb095e81ed"
+    },
+    {
+      "path": "src/games/parcel-panic/contracts.js",
+      "sha256": "ea5c95e5054e4f9deced38c5ef2cd4a23b1f087a4155e40de97e4a81911caaf3"
+    },
+    {
+      "path": "src/games/parcel-panic/levels.js",
+      "sha256": "1a9a8e63d83d838af6e6ce0632bcd932dc84b0fb8f7a1944da756d5069d2cf9d"
+    },
+    {
+      "path": "src/games/parcel-panic/model.js",
+      "sha256": "3d35a268b5deeaa70198594afd377e0779e0ac7160fcfdfed5676754b6a823b5"
+    },
+    {
+      "path": "src/games/parcel-panic/ranked.js",
+      "sha256": "5a877110c70a5be936eff2953293afb2d4dad4f46953612faf431848c8871420"
+    },
+    {
+      "path": "src/games/parcel-panic/replay.js",
+      "sha256": "cfdffd61812442fbee61a4f48eaff6b2a9b32500730e39e4f4a7648798bf9559"
+    }
+  ]
+}

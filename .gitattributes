@@ -1,0 +1,7 @@
+* text=auto
+*.md text eol=crlf
+*.js text eol=crlf
+*.mjs text eol=crlf
+*.json text eol=crlf
+*.sql text eol=crlf
+*.yml text eol=crlf
