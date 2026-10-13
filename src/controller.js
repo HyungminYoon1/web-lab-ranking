@@ -1,9 +1,9 @@
 import {Failure,MAX_BODY} from "./domain.js";
 
 async function boundedJson(request){
-  if(!/^application\/json(?:;|$)/i.test(request.headers.get("Content-Type")??""))throw new Failure(415,"json_required");
+  if(!/^application\/json(?:;|$)/i.test(request.headers.get("Content-Type")??"")){await request.body?.cancel().catch(()=>{});throw new Failure(415,"json_required");}
   const declared=Number(request.headers.get("Content-Length")??0);
-  if(declared>MAX_BODY)throw new Failure(413,"payload_too_large");
+  if(declared>MAX_BODY){await request.body?.cancel().catch(()=>{});throw new Failure(413,"payload_too_large");}
   const reader=request.body?.getReader();if(!reader)throw new Failure(400,"missing_body");
   const parts=[];let size=0;
   while(true){const {done,value}=await reader.read();if(done)break;size+=value.byteLength;if(size>MAX_BODY){await reader.cancel();throw new Failure(413,"payload_too_large");}parts.push(value);}

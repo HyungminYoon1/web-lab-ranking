@@ -26,12 +26,12 @@ export class RankingService {
     exactObject(body,["playerId","game","rulesVersion","challengeId"]);
     const d=definition(body.game);
     if(body.rulesVersion!==d.rulesVersion||body.challengeId!==d.challengeId)throw new Failure(409,"rules_changed");
-    const now=this.prepare();await this.authenticate(body.playerId,authorization);
+    this.prepare();await this.authenticate(body.playerId,authorization);const now=this.clock();
     const runId=this.randomId();this.repository.createTicket(runId,body.playerId,d,now);
     return {runId,definition:d,expiresAt:new Date(now+POLICY.ticketMs).toISOString()};
   }
   async submit(body,authorization){
-    const d=submission(body),now=this.prepare();await this.authenticate(body.playerId,authorization);
+    const d=submission(body);this.prepare();await this.authenticate(body.playerId,authorization);const now=this.clock();
     const ticket=this.repository.ticket(body.runId);
     if(!ticket||ticket.player_id!==body.playerId)throw new Failure(404,"unknown_attempt");
     if(ticket.game!==d.game||ticket.rules!==d.rulesVersion||ticket.challenge!==d.challengeId)throw new Failure(409,"rules_changed");

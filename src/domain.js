@@ -9,7 +9,7 @@ export class Failure extends Error {
   constructor(status,code){super(code);this.status=status;this.code=code;}
 }
 export function definition(game){
-  if(!Object.hasOwn(games,game))throw new Failure(404,"unknown_game");
+  if(typeof game!=="string"||!Object.hasOwn(games,game))throw new Failure(404,"unknown_game");
   return games[game].rankingDefinition();
 }
 export function definitions(){return Object.keys(games).map(definition);}

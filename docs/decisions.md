@@ -1,5 +1,14 @@
 # Decisions
 
+## D09 — Delayed authority, response validation and bounded rejection (2026-10-13)
+
+Context: systematic red-first tests reproduced stale timestamps after asynchronous authentication, coerced game IDs, unconfirmed identity writes/deletion responses and cross-tab late client callbacks.
+Options: change schemas/ranking versions, serialize every frontend operation across tabs, or preserve contracts and validate current authority/acknowledgments at each boundary.
+Decision: read ticket time after authentication; accept only string allowlisted game IDs. Cancel unread header-rejected bodies while retaining the byte cap. Client uses an identity generation counter, conditional old-identity removal, write readback, UUID ticket shape and explicit deleted:true. A malformed board is built/validated before replacing the last good display. Copy the same client into only Neon/Parcel.
+Rationale: explicit deletion/new identity cannot be undone by late responses, and server failure must not erase private play or claim success. No rules, schema, retention, resource, billing or access-control expansion. A related local development proxy failure is recorded, not concealed by unsafe unlimited draining or blanket retries.
+Affected: service/domain/controller, canonical client and two copies, edge tests/browser harnesses, verification.
+Review: failed-before/same-after cases; all tests/checks; real local legal UI+SQLite flows; current Free plan; public health/board GET only. The 413-follow-up local runtime edge remains unresolved with production reproduction NOT_RUN; do not imply an upstream root cause is proven.
+
 ## D07 — Match strict rotation input validation (2026-10-13)
 
 Context: the Parcel maintenance regression found string/array/boolean coordinates were coerced into grid keys. The frontend now requires integer coordinates; the server must keep the same replay boundary.

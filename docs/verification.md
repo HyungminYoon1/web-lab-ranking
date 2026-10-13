@@ -1,5 +1,9 @@
 # Verification
 
+## 2026-10-13 — systematic edge-case audit
+
+See [edge-cases-20261013.md](edge-cases-20261013.md) for 27 new Node cases, executed RED/GREEN, actual local SQLite/browser flows and explicit unresolved local 413-follow-up transport behavior. Full source CI, Worker deployment and read-only public verification are distinct evidence; historical results below are not new coverage.
+
 ## 2026-10-13 — Maintenance / LOCAL and provider authentication
 
 - Node 20 subtests PASS (including two helper modules); static/source checks PASS. New red-first cases cover authenticated-start/delete interleaving, exact expiry and malformed Parcel rotation coordinates. Legal replay/score versions and persistent schemas are unchanged.
