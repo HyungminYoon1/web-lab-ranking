@@ -1,5 +1,12 @@
 # Verification
 
+## 2026-10-13 — Maintenance / LOCAL and provider authentication
+
+- Node 20 subtests PASS (including two helper modules); static/source checks PASS. New red-first cases cover authenticated-start/delete interleaving, exact expiry and malformed Parcel rotation coordinates. Legal replay/score versions and persistent schemas are unchanged.
+- Actual local workerd/SQLite: legal Parcel 1457 and Neon 4280, query, idempotent retry, invalid/incomplete fields, CORS and authenticated deletion PASS. Synthetic local rows removed. Eight frontend/server rule files and their manifest digests match exactly.
+- Authenticated account dashboard: Workers Free / $0 / Current plan verified. Same Wrangler client refreshed with account/user read and Worker script write, without other product write scopes. CLI login completed successfully; Edge remains the user's default browser. No secrets printed or committed, paid changes, new DB or new migrations.
+- Public maintenance QA uses health/board reads only; current production submission/deletion is NOT_RUN. Source CI and actual deployed version are separate evidence in [WEB LAB maintenance](https://github.com/HyungminYoon1/web-lab/blob/main/docs/maintenance-20261013.md).
+
 ## 2026-10-09 — initial local construction
 
 Initial construction snapshot: implementation alone did not establish a functioning public server. Current concrete evidence follows.

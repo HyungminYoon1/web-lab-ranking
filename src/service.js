@@ -35,7 +35,7 @@ export class RankingService {
     const ticket=this.repository.ticket(body.runId);
     if(!ticket||ticket.player_id!==body.playerId)throw new Failure(404,"unknown_attempt");
     if(ticket.game!==d.game||ticket.rules!==d.rulesVersion||ticket.challenge!==d.challengeId)throw new Failure(409,"rules_changed");
-    if(ticket.expires_at<now)throw new Failure(410,"attempt_expired");
+    if(ticket.expires_at<=now)throw new Failure(410,"attempt_expired");
     // Return the original response for a network retry, never reuse a ticket for another result.
     if(ticket.result)return JSON.parse(ticket.result);
     const result=verified(d.game,body.actions);

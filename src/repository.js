@@ -48,6 +48,7 @@ export class RankingRepository {
     if(this.count("tickets")>=POLICY.tickets)throw new Failure(503,"storage_limit");
     this.quota(now,"runs");
     this.transaction(()=>{
+      if(!this.player(playerId))throw new Failure(401,"unauthorized");
       // Keep at most three open attempts per identity and game.
       this.sql.exec("DELETE FROM tickets WHERE id IN (SELECT id FROM tickets WHERE player_id=? AND game=? AND result IS NULL ORDER BY expires_at DESC LIMIT -1 OFFSET 2)",playerId,d.game);
       this.sql.exec("INSERT INTO tickets(id,player_id,game,rules,challenge,expires_at) VALUES(?,?,?,?,?,?)",runId,playerId,d.game,d.rulesVersion,d.challengeId,now+POLICY.ticketMs);

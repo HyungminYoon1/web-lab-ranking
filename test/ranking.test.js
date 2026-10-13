@@ -16,6 +16,14 @@ async function identity(h){const player=await h.service.createIdentity({});retur
 async function attempt(h,p,game="neon-tactics"){const d=definition(game),run=await h.service.start({playerId:p.playerId,game,rulesVersion:d.rulesVersion,challengeId:d.challengeId},p.authorization);return {playerId:p.playerId,runId:run.runId,game,rulesVersion:d.rulesVersion,challengeId:d.challengeId,nickname:"테스트",actions:game==="neon-tactics"?neonActions:parcelActions};}
 const rejects=(action,code)=>assert.rejects(action,e=>e.code===code);
 
+test("ranked rotation rejects coercible coordinates without changing legal replay outcomes",()=>{
+  const setup={type:"edit",command:{x:1,y:3,type:"belt",dir:0}};
+  for(const [x,y] of [["1",3],[1,"3"],[[1],3],[true,3]])
+    assert.throws(()=>verified("parcel-panic",[setup,{type:"rotate",x,y}]),e=>e.code==="illegal_replay");
+  assert.throws(()=>verified("parcel-panic",[setup,{type:"rotate",x:1,y:3}]),e=>e.code==="challenge_not_completed");
+  assert.equal(verified("parcel-panic",parcelActions).score,1457);
+});
+
 test("only fixed approved hardest boards, versions and actual legal witnesses",()=>{
   assert.deepEqual(definitions().map(d=>[d.game,d.levelId]),[["parcel-panic",14],["neon-tactics",16]]);
   assert.equal(verified("neon-tactics",neonActions).score,4280);
@@ -112,4 +120,22 @@ test("JSON transport rejects oversize, unknown fields and internal error leaks",
   const created=await route(request("{}"),h.service);assert.equal(created.status,201);
   const fail=await route(new Request("https://ranking.test/v1/boards/neon-tactics"),{board(){throw new Error("private credentials SQL");}});
   assert.deepEqual(await fail.json(),{error:"service_unavailable"});h.db.close();
+});
+
+test("deleting an identity while a start request is authenticating cannot leave an orphan ticket",async()=>{
+  const h=harness(),p=await identity(h),d=definition('neon-tactics');
+  let reached,release,pause=true;
+  const authenticated=new Promise(resolve=>{reached=resolve;}),hold=new Promise(resolve=>{release=resolve;});
+  const authenticate=h.service.authenticate.bind(h.service);
+  h.service.authenticate=async(...args)=>{const player=await authenticate(...args);if(pause){pause=false;reached();await hold;}return player;};
+  const pending=h.service.start({playerId:p.playerId,game:d.game,rulesVersion:d.rulesVersion,challengeId:d.challengeId},p.authorization);
+  await authenticated;await h.service.remove({playerId:p.playerId},p.authorization);release();
+  await assert.rejects(pending,error=>error.code==='unauthorized');
+  assert.equal(h.repository.count('players'),0);assert.equal(h.repository.count('tickets'),0);assert.equal(h.repository.count('bests'),0);h.db.close();
+});
+
+test("a ticket expires exactly at the declared expiresAt instant",async()=>{
+  const h=harness(),p=await identity(h),body=await attempt(h,p);h.advance(POLICY.ticketMs);
+  await rejects(()=>h.service.submit(body,p.authorization),'attempt_expired');
+  assert.equal(h.repository.count('bests'),0);h.db.close();
 });

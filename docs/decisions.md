@@ -1,5 +1,32 @@
 # Decisions
 
+## D07 — Match strict rotation input validation (2026-10-13)
+
+Context: the Parcel maintenance regression found string/array/boolean coordinates were coerced into grid keys. The frontend now requires integer coordinates; the server must keep the same replay boundary.
+Options: keep divergent validators; change game/score rules and invalidate existing boards; synchronize the one-line strict input check only.
+Decision: copy the integer guard into the frozen server replay and update its manifest digest. Authored boards, legal inputs, scores, tie-breaks and rules versions are unchanged. Existing valid results remain compatible; malformed inputs are rejected.
+Rationale: input validation should agree on both sides without resetting legitimate competition records. No schema, retention or quota changes.
+Affected: src/games/parcel-panic/replay.js, manifest.json, test/ranking.test.js.
+Review: red-first malformed-coordinate test, legal 1457/4280 witness replay, byte-identical frontend/server snapshots and local workerd smoke.
+
+## D08 — Existing deployment authentication and public commit identity (2026-10-13)
+
+Context: the existing Wrangler credential expired; the API repository did not have a scoped GitHub noreply commit identity.
+Options: publish personal commit contact information or add GitHub deployment credentials; keep manual deployment and use the already verified public noreply identity.
+Decision: use the sibling app's existing verified GitHub noreply identity for this repository only. Refresh the same Wrangler app with account/user read and Worker script write permissions, without KV, D1, Pages or other product write scopes. No credential values enter source, logs shown to the user or GitHub.
+Rationale: preserve the manual deployment boundary and minimize disclosed identity and provider permissions. The live dashboard showed Free / $0 / Current plan before deployment.
+Affected: repository-local Git configuration and local Wrangler authentication only; no account plan/billing/security setting changes.
+Review: verify origin and staged source, retain separate source CI and actual Worker version evidence. Authentication requiring human input is handed off.
+
+## D06 — Delete/start race and exact ticket expiry (2026-10-13)
+
+Context: the approved maintenance review reproduced a start request that finished authentication, waited while another request deleted the identity, then inserted an orphan ticket. A ticket was also accepted exactly at its advertised expiry instant.
+Options: introduce new identity/state schemas; serialize all asynchronous request handling; recheck identity existence within ticket insertion and enforce the expiry boundary.
+Decision: require the player row inside the existing ticket transaction, returning the existing unauthorized error after deletion. Reject submission at expires_at <= now. Existing request/run quotas, schema, retention duration, authentication model, frozen games and client contracts stay unchanged.
+Rationale: explicit deletion cannot be followed by ticket creation from already completed authentication; declared expiry is unambiguous. This is an in-scope lifecycle correction, not a new storage policy or ranked game version.
+Affected: src/repository.js, src/service.js, regression tests and verification record.
+Review: red-first deterministic authentication pause/delete/start interleaving with actual in-memory SQLite; no player/ticket/best after completion; exact expiry rejected without a saved best; complete server/client tests and local workerd. Publish through the existing Workers Free resource only after current plan verification.
+
 ## D01 — Fixed hardest challenges only
 
 Context: user narrowed public rankings to extremely difficult games with equal opportunities.
