@@ -36,6 +36,8 @@ Deterministic delayed authentication, synthetic storage/DOM/network and controll
 
 ## Local runtime issue — not hidden by retries
 
+Historical result below. A later local-entry repair, raw-runtime limitations and RED/GREEN evidence are recorded in [the October 14 follow-up](verification.md#2026-10-14--local-post-413-transport-repair); the original failed runs remain failed.
+
 The complete 32-check HTTP run passed, but repeated runs intermittently returned non-JSON `500 Network connection lost` for the next small request after a 413. Wrangler logged an unread request-stream error. It occurred before and after explicit header cancellation; the failed run is not relabelled PASS. Normal real-browser play/register/delete passed without retry. Request parsing of an empty403 preflight was also corrected in the *harness*, not counted as a product defect.
 
 A [Cloudflare SDK report](https://github.com/cloudflare/workers-sdk/issues/15709) describes a similar local oversized-body cancellation/follow-up failure. That is a lead, not proof of this instance's internal cause or production impact. Preserve the 48KiB cap and fail-closed behavior; do not drain an unbounded hostile stream or weaken limits just to make development QA green. This local transport edge remains **PARTIAL / unresolved**, and production reproduction is **NOT_RUN**. Client timeout/network handling is verified and leaves private play usable. No automatic public write/retry test was added.

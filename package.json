@@ -6,9 +6,12 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "test": "node --test",
+    "test:transport": "node tools/run-local-transport.mjs",
+    "test:streams": "node tools/inspect-local-stream.mjs --assert-clean --cycles 20",
     "check": "node tools/check.mjs",
-    "dev": "wrangler dev --ip 127.0.0.1",
+    "dev": "node tools/local-dev.mjs",
     "deploy": "wrangler deploy"
   },
-  "devDependencies": { "wrangler": "4.149.0" }
+  "devDependencies": { "wrangler": "4.149.0" },
+  "overrides": { "workerd": "1.20261014.1" }
 }
